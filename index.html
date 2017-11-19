@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="./src/pddatepicker.css"/>
+    <script src="https://unpkg.com/moment@2.19.2/moment.js"></script>
+    <script src="https://unpkg.com/jquery@3.2.1/dist/jquery.js"></script>
+    <script src="dist/bundle.js"></script>
+</head>
+<body>
+
+<!--<div style="height: 1500px;width: 100%;position: absolute;padding: 60px">
+    &lt;!&ndash;日期选择&ndash;&gt;
+    <div class="pd-date-picker">
+        &lt;!&ndash;年&ndash;&gt;
+        <div class="pd-date-picker-bigbox">
+            <div class="pd-date-picker-title-box">
+                <div class="pd-date-picker-btn pd-iconfont icon-arrow-left"></div>
+                <div class="pd-date-picker-title">2017年10月10日</div>
+                <div class="pd-date-picker-btn pd-iconfont icon-arrow-right"></div>
+            </div>
+            <div class="pd-date-picker-date-box">
+                <div class="yearmonthbox">
+                    <ul>
+                        <li class="next"><div>12月</div></li>
+                        <li class="disabled"><div>121</div></li>
+                        <li class="active"><div>2020</div></li>
+                        <li class="prev"><div>121</div></li>
+                        <li><div>121</div></li>
+                        <li><div>121</div></li>
+                        <li><div>121</div></li>
+                        <li><div>121</div></li>
+                        <li><div>121</div></li>
+                        <li><div>121</div></li>
+                        <li><div>121</div></li>
+                        <li><div>121</div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        &lt;!&ndash;年 end&ndash;&gt;
+        &lt;!&ndash;月&ndash;&gt;
+        <div class="pd-date-picker-bigbox">
+            <div class="pd-date-picker-title-box">
+                <div class="pd-date-picker-btn pd-iconfont icon-arrow-left"></div>
+                <div class="pd-date-picker-title">2017年10月10日</div>
+                <div class="pd-date-picker-btn pd-iconfont icon-arrow-right"></div>
+            </div>
+            <div class="pd-date-picker-date-box">
+                <div class="yearmonthbox">
+                    <ul>
+                        <li class="next"><div>1月</div></li>
+                        <li class="disabled"><div>2月</div></li>
+                        <li class="active"><div>3月</div></li>
+                        <li class="prev"><div>4月</div></li>
+                        <li><div>5月</div></li>
+                        <li><div>6月</div></li>
+                        <li><div>7月</div></li>
+                        <li><div>8月</div></li>
+                        <li><div>9月</div></li>
+                        <li><div>10月</div></li>
+                        <li><div>11月</div></li>
+                        <li><div>12月</div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        &lt;!&ndash;月 end&ndash;&gt;
+        &lt;!&ndash;day&ndash;&gt;
+        <div class="pd-date-picker-bigbox">
+            <div class="pd-date-picker-title-box">
+                <div class="pd-date-picker-btn pd-iconfont icon-arrow-left"></div>
+                <div class="pd-date-picker-title">2017年10月10日</div>
+                <div class="pd-date-picker-btn pd-iconfont icon-arrow-right"></div>
+            </div>
+            <div class="pd-date-picker-date-box">
+                <ul class="title">
+                    <li>日</li>
+                    <li>一</li>
+                    <li>二</li>
+                    <li>三</li>
+                    <li>四</li>
+                    <li>五</li>
+                    <li>六</li>
+                </ul>
+                <div class="daybox">
+                    <ul>
+                        <li class="prev"><div>12</div></li>
+                        <li class="prev"><div>12</div></li>
+                        <li class="prev"><div>12</div></li>
+                        <li class="disabled"><div>12</div></li>
+                        <li class="disabled"><div>12</div></li>
+                        <li class="disabled"><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li class="active"><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li><div>12</div></li>
+                        <li class="next"><div>12</div></li>
+                        <li class="next"><div>12</div></li>
+                        <li class="next"><div>12</div></li>
+                        <li class="next"><div>12</div></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        &lt;!&ndash;day end&ndash;&gt;
+        &lt;!&ndash;hour &ndash;&gt;
+        <div class="pd-date-picker-box">
+            <div class="pd-date-picker-title-box">
+                <div class="pd-date-picker-title">上午22:00</div>
+            </div>
+            <div class="pd-date-picker-date-box">
+                <div class="hourbox">
+                    <div class="item">
+                        <div class="check-line"></div>
+                        <div class="check">
+                            <div class="check-list">
+                                <div class="check-div">1</div>
+                                <div class="check-div">2</div>
+                                <div class="check-div">3</div>
+                                <div class="check-div">4</div>
+                                <div class="check-div">5</div>
+                            </div>
+                        </div>
+                        <div class="wheel">
+                            <div class="wheel-div">1</div>
+                            <div class="wheel-div">2</div>
+                            <div class="wheel-div">3</div>
+                            <div class="wheel-div">4</div>
+                            <div class="wheel-div">5</div>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <div class="check-line"></div>
+                        <div class="check">
+                            <ul class="check-list">
+                                <li class="list-div">1</li>
+                                <li class="list-div">2</li>
+                                <li class="list-div">3</li>
+                                <li class="list-div">4</li>
+                                <li class="list-div">5</li>
+                            </ul>
+                        </div>
+                        <ul class="wheel">
+                            <li class="wheel-div">1</li>
+                            <li class="wheel-div">2</li>
+                            <li class="wheel-div">3</li>
+                            <li class="wheel-div">4</li>
+                            <li class="wheel-div">5</li>
+                        </ul>
+                    </div>
+                    <div class="item">
+                        <div class="check-line"></div>
+                        <div class="check">
+                            <div class="check-list">
+                                <div class="check-div">1</div>
+                                <div class="check-div">2</div>
+                                <div class="check-div">3</div>
+                                <div class="check-div">4</div>
+                                <div class="check-div">5</div>
+                            </div>
+                        </div>
+                        <div class="wheel">
+                            <div class="wheel-div">1</div>
+                            <div class="wheel-div">2</div>
+                            <div class="wheel-div">3</div>
+                            <div class="wheel-div">4</div>
+                            <div class="wheel-div">5</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        &lt;!&ndash;hour end&ndash;&gt;
+    </div>
+</div>-->
+
+<div style="padding: 150px">
+    <input type="text" id="app">
+</div>
+<script>
+    $('#app').PdDatePicker({
+      initDate:'2016-11-19 15:27',
+      format:'YYYY-MM-DD HH:mm:ss'
+    }).on('change',function (data) {
+      console.log(data)
+    })
+
+</script>
+</body>
+</html>
