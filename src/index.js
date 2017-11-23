@@ -28,13 +28,13 @@ import "babel-polyfill";
 
 
 class PdDatePicker {
-  constructor (id, options) {
+  constructor(id, options) {
     this.id = null;
     this.options = {};
     this.data = {};
     this.View = null;
     this.currentView = null;
-    this.isShow = true;
+    this.isShow = false;
     this.isPick = false;
     _fn.initOptions.call(this, id, options);
     _fn.initData.call(this);
@@ -43,7 +43,7 @@ class PdDatePicker {
     _fn.isShow.call(this);
   }
 
-  on (event, callback) {
+  on(event, callback) {
     if (EVENTS_TYPE.indexOf(event) < 0) {
       return;
     }
@@ -55,7 +55,7 @@ class PdDatePicker {
     events[event].add(callback);
   }
 
-  fire (event, param) {
+  fire(event, param) {
     if (EVENTS_TYPE.indexOf(event) < 0) {
       return;
     }
@@ -63,10 +63,10 @@ class PdDatePicker {
     events[event].fire(param);
   }
 
-  hide () {
+  hide() {
     if (!this.isShow) return;
     $(`div[pd-item=pdDatePicker${this.id}]`).css('display', 'none');
-    $('#'+this.options.containerId).css('position','');
+    $('#' + this.options.containerId).css('position', '');
     let result = {};
     if (this.isPick) {
       result = this.data.tempDate;
@@ -82,19 +82,20 @@ class PdDatePicker {
     this.fire('change', result);
   }
 
-  show () {
+  show() {
+    $(`div[pd-item^=pdDatePicker]`).css('display', 'none');
     $(`div[pd-item=pdDatePicker${this.id}]`).css('display', 'block');
-    $('#'+this.options.containerId).css('position','relative');
+    $('#' + this.options.containerId).css('position', 'relative');
     _fn.getPosition.call(this);
   }
 
-  destroy () {
+  destroy() {
     this.View.remove();
   }
 
   /* getDateValue */
 
-  getDate (dateStr) {
+  getDate(dateStr) {
     if (dateStr) {
       return {
         year: moment(dateStr).get('year'),
@@ -102,7 +103,7 @@ class PdDatePicker {
         day: moment(dateStr).get('date'),
         hour: moment(dateStr).get('hour'),
         minute: moment(dateStr).get('minute'),
-        second: moment(dateStr).get('second'),
+        second: moment(dateStr).get('second')
       }
     } else {
       return {
@@ -111,14 +112,14 @@ class PdDatePicker {
         day: moment().get('date'),
         hour: moment().get('hour'),
         minute: moment().get('minute'),
-        second: moment().get('second'),
+        second: moment().get('second')
       }
     }
   }
 }
 
 class pdWheelItem {
-  constructor (options) {
+  constructor(options) {
     this.container = null;
     this.dataList = null;
     this.value = null;
@@ -126,7 +127,7 @@ class pdWheelItem {
     $(document.body).bind('click', _fn.output)
   }
 
-  init (options) {
+  init(options) {
     //todo 判断options
     this.container = options.container;
     this.dataList = options.dataList;
@@ -136,20 +137,20 @@ class pdWheelItem {
     this.bindEvt();
   }
 
-  on (event, callback) {
+  on(event, callback) {
     this.View.bind(event, function () {
       callback(arguments)
     })
   }
 
-  bindEvt () {
+  bindEvt() {
     let that = this
     that.View.bind('mousedown', (e) => {
       that.start(e);
     })
   }
 
-  start (e) {
+  start(e) {
     let that = this;
     if (e.button == 0) {//判断是否点击鼠标左键
       console.log('mousedown');
@@ -179,7 +180,7 @@ class pdWheelItem {
     return false;//阻止默认事件或冒泡
   }
 
-  move (e) {
+  move(e) {
     let that = this;
     //e.clientY
     let distance = e.clientY - that.startY;
@@ -187,7 +188,7 @@ class pdWheelItem {
     return false;//阻止默认事件或冒泡
   }
 
-  stop (e) {
+  stop(e) {
     let that = this;
     let nowTime = new Date().getTime();
     let distance = e.clientY - that.startY;
@@ -204,7 +205,7 @@ class pdWheelItem {
     $(document.body).unbind("mouseup");
   }
 
-  render () {
+  render() {
     let that = this;
     let item = $(TEMPLATE_ITEM).clone().attr('pd-item', 'wheel');
     let checkList = '';
@@ -220,7 +221,7 @@ class pdWheelItem {
     that.setCss();
   }
 
-  setCss (type, distance, time) {
+  setCss(type, distance, time) {
     let that = this;
     let total = Math.ceil(that.dataList.length * 40);
     let index = 0;
@@ -280,7 +281,7 @@ class pdWheelItem {
 /* private */
 const _fn = {
   /*getPosition*/
-  getPosition () {
+  getPosition() {
     let divs = document.getElementsByTagName("div");
     let max = 0;
     for (let i = 0; i < divs.length; i++) {
@@ -322,7 +323,7 @@ const _fn = {
 
   },
   /*isShow*/
-  isShow () {
+  isShow() {
     let input = $('#' + this.id);
     this.View.on('click', (e) => {
       e.preventDefault();
@@ -335,27 +336,57 @@ const _fn = {
       this.isShow = false;
     });
     input.on('click', (e) => {
-      e.preventDefault();
       e.stopPropagation();
       this.show();
       this.isShow = true;
     });
-    this.hide();
+    //this.hide();
   },
   /*init*/
-  initOptions (id, options) {
+  initOptions(id, options) {
     if (!id) {
       console.warn(_fn.logger('need a unique dom id'));
       return false
     }
     this.id = id;
+    //reg options
+    if (!(options.startView >= OPTIONS.maxView && options.startView <= OPTIONS.minView)) {
+      options.startView = 3
+    }
+    if (options.maxView < 1 || options.maxView > 4) {
+      options.maxView = 1
+    }
+    if (options.minView < 1 || options.minView > 4) {
+      options.minView = 4
+    }
+    if (!moment(options.initDate).isValid()) {
+      options.initDate = moment()
+    }
+    if (!moment(options.startDate).isValid()) {
+      options.startDate = null;
+    }
+    if (!moment(options.endDate).isValid()) {
+      options.endDate = null;
+    }
+    if (options.language !== 'cn' || options.language !== 'en') {
+      options.language = 'cn'
+    }
+    if (options.minuteRange >= 60) {
+      options.minuteRange = 1
+    }
+    if ($('#' + options.containerId).length == 0) {
+      options.containerId = null
+    }
+    if (typeof options.hourList !== Array) {
+      options.hourList = null
+    }
     for (let key in OPTIONS) {
       this.options[key] = options[key] ? options[key] : OPTIONS[key];
     }
     this.currentView = this.options.startView;
   },
   /*initData*/
-  initData () {
+  initData() {
     let that = this;
     let date = '';
     if (that.options.forceFormat) {
@@ -370,7 +401,7 @@ const _fn = {
     that.data.yearList = _fn.getYearList.call(that, myDate);
   },
   /*initRenderData*/
-  initRenderData () {
+  initRenderData() {
     let that = this;
     let myDate = moment(that.data.tempDate);
     that.data.monthList = Array.from({length: 12}, (value, index) => index);
@@ -381,11 +412,13 @@ const _fn = {
     that.data.secondList = Array.from({length: 60}, (value, index) => index);
   },
   /*renderDom*/
-  renderDom () {
+  renderDom() {
     let that = this;
+    $(document.body).find(`div[pd-itme=pdDatePicker${that.id}]`).remove();
     let box = $(TEMPLATE_BOX).clone().attr('pd-item', 'pdDatePicker' + that.id);
     that.View && that.View.remove();
     that.View = box;
+    that.View.css('display', 'none');
     //todo
     _fn.renderByView.call(that);
     if (this.options.containerId) {
@@ -396,14 +429,13 @@ const _fn = {
 
     console.log(that)
   },
-  renderYear () {
+  renderYear() {
     let that = this;
     let tempDate = that.data.tempDate;
-    let date = that.getDate(tempDate);
     /*year*/
     let yearBox = $(TEMPLATE_YEAR_MONTH).clone().attr('pd-item', 'year');
     /*year render*/
-    yearBox.find('.pd-date-picker-title').html(that.data.yearList[0] + Language[that.options.language].desc[0] + ' - ' + that.data.yearList[that.data.yearList.length - 1] + Language[that.options.language].desc[0]);
+    yearBox.find('.pd-date-picker-title').html(that.data.yearList[0] + ' - ' + that.data.yearList[that.data.yearList.length - 1]);
     let yearListStr = '';
     for (let i = 0; i < that.data.yearList.length; i++) {
       let year = that.data.yearList[i];
@@ -420,14 +452,13 @@ const _fn = {
     that.View.append(yearBox);
     _fn.bindEvt.call(that, 'year');
   },
-  renderMonth () {
+  renderMonth() {
     let that = this;
     let tempDate = that.data.tempDate;
-    let date = that.getDate(tempDate);
     /*month*/
     let monthBox = $(TEMPLATE_YEAR_MONTH).clone().attr('pd-item', 'month');
     /*month render*/
-    monthBox.find('.pd-date-picker-title').html(date.year + Language[that.options.language].desc[0]);
+    monthBox.find('.pd-date-picker-title').html(tempDate.format('YYYY-MM'));
     let monthListStr = '';
     for (let i = 0; i < that.data.monthList.length; i++) {
       let month = that.data.monthList[i];
@@ -458,15 +489,13 @@ const _fn = {
     that.View.append(monthBox);
     _fn.bindEvt.call(that, 'month');
   },
-  renderDay () {
+  renderDay() {
     let that = this;
     let tempDate = that.data.tempDate;
-    let date = that.getDate(tempDate);
     /*day*/
     let dayBox = $(TEMPLATE_DAY).clone().attr('pd-item', 'day');
     /*day render*/
-    let title = date.year + Language[that.options.language].desc[0] + ((date.month + 1) < 10 ? '0' + (date.month + 1) : (date.month + 1)) + Language[that.options.language].desc[1] + date.day + Language[that.options.language].desc[2];
-    dayBox.find('.pd-date-picker-title').html(title);
+    dayBox.find('.pd-date-picker-title').html(tempDate.format('YYYY-MM-DD'));
     let dayListStr = '';
     for (let i = 0; i < that.data.dayList.length; i++) {
       let day = that.data.dayList[i];
@@ -503,14 +532,13 @@ const _fn = {
     that.View.append(dayBox);
     _fn.bindEvt.call(that, 'day');
   },
-  renderHour () {
+  renderHour() {
     let that = this;
     let tempDate = that.data.tempDate;
     let date = that.getDate(tempDate);
     /*hour*/
     let hourBox = $(TEMPLATE_WHEEL).clone().attr('pd-item', 'hour');
     /*hour render*/
-    hourBox.find('.pd-date-picker-title').html(tempDate.format('HH:mm'));
     let hourWheel = new pdWheelItem({
       container: hourBox.find('.hourbox'),
       dataList: that.data.hourList,
@@ -523,18 +551,40 @@ const _fn = {
     });
     hourWheel.on('change', (argArr) => {
       _fn.pickDate.call(that, 'hour', argArr[1]);
-      hourBox.find('.pd-date-picker-title').html(that.data.tempDate.format('HH:mm'));
+      _fn.setHourTitle.call(that);
     });
     minuteWheel.on('change', (argArr) => {
       _fn.pickDate.call(that, 'minute', argArr[1]);
-      hourBox.find('.pd-date-picker-title').html(that.data.tempDate.format('HH:mm'));
+      _fn.setHourTitle.call(that);
     });
+    if (that.options.format.indexOf('mm') > -1) {
+      let secondWheel = new pdWheelItem({
+        container: hourBox.find('.hourbox'),
+        dataList: Array.from({length: 60}, (value, index) => index),
+        value: tempDate.format('ss')
+      });
+      secondWheel.on('change', (argArr) => {
+        _fn.pickDate.call(that, 'second', argArr[1]);
+        _fn.setHourTitle.call(that);
+      });
+    }
     that.View.find('div[pd-item=hour]').remove();
     that.View.append(hourBox);
+    _fn.setHourTitle.call(that);
     _fn.bindEvt.call(that, 'hour');
   },
+  /*set HourTitle*/
+  setHourTitle() {
+    let that = this;
+    let title = that.View.find('div[pd-item=hour]').find('.pd-date-picker-title');
+    if (that.options.minView === that.options.maxView === 4) {
+      title.html(that.data.tempDate.format('HH:mm:ss'))
+    } else {
+      title.html(that.data.tempDate.format('YYYY-MM-DD HH:mm:ss'))
+    }
+  },
   /*changeView*/
-  changeView () {
+  changeView() {
     let that = this;
     let yearBox = that.View.find('div[pd-item=year]');
     let monthBox = that.View.find('div[pd-item=month]');
@@ -574,7 +624,7 @@ const _fn = {
     }
   },
   /*bindEvt*/
-  bindEvt (type) {
+  bindEvt(type) {
     let that = this;
     let yearBox = that.View.find('div[pd-item=year]');
     let monthBox = that.View.find('div[pd-item=month]');
@@ -670,7 +720,7 @@ const _fn = {
     }
   },
   /*regDate*/
-  regDate (tempDate, type, nextOrPrev) {
+  regDate(tempDate, type, nextOrPrev) {
     tempDate = Number(tempDate);
     let that = this;
     let temp = that.getDate(that.data.tempDate);
@@ -690,6 +740,9 @@ const _fn = {
       if (!startDate && endDate) {
         result = moment(endDate).get('year') >= tempDate
       }
+      if (!startDate && !endDate) {
+        result = true
+      }
     }
     if (type === 'month') {
       let monthStr = year + '-' + (tempDate < 10 ? '0' + tempDate : tempDate);
@@ -701,6 +754,9 @@ const _fn = {
       }
       if (!startDate && endDate) {
         result = moment(endDate).format('YYYY-MM') >= monthStr
+      }
+      if (!startDate && !endDate) {
+        result = true
       }
     }
     if (type === 'day') {
@@ -724,11 +780,14 @@ const _fn = {
       if (!startDate && endDate) {
         result = moment(endDate).format('YYYY-MM-DD') >= dayStr
       }
+      if (!startDate && !endDate) {
+        result = true
+      }
     }
     return result
   },
   /*isActive*/
-  isActive (dateStr, type, nextOrPrev) {
+  isActive(dateStr, type, nextOrPrev) {
     dateStr = Number(dateStr)
     let that = this;
     let result = false;
@@ -759,7 +818,7 @@ const _fn = {
     return result
   },
   /*getYearList*/
-  getYearList (momentObj) {
+  getYearList(momentObj) {
     let that = this;
     /*moment(str) will not support try moment(str,format)*/
     let startDate = moment(momentObj, 'YYYY-MM-DD').subtract(5, 'y').get('year');
@@ -770,7 +829,7 @@ const _fn = {
     return arr
   },
   /*getDayList*/
-  getDayList (momentObj) {
+  getDayList(momentObj) {
     let tmpYear = moment(momentObj).get('year');
     let tmpMonth = moment(momentObj).get('month');
 
@@ -796,7 +855,7 @@ const _fn = {
     return daylist
   },
   /*getHourList*/
-  getHourList () {
+  getHourList() {
     if (this.options.hourList) {
       let temp = [];
       for (let i = 0; i < this.options.hourList.length; i++) {
@@ -811,7 +870,7 @@ const _fn = {
     }
   },
   /*getMinuteList*/
-  getMinuteList () {
+  getMinuteList() {
     /*all 60*/
     let len = Math.ceil(60 / this.options.minuteRange);
     return Array.from({length: len}, (value, index) => {
@@ -824,7 +883,7 @@ const _fn = {
     })
   },
   /*nextEvt*/
-  nextEvt (type) {
+  nextEvt(type) {
     let that = this;
     let date = that.getDate(that.data.tempDate);
     let year = date.year;
@@ -855,7 +914,7 @@ const _fn = {
     _fn.renderByView.call(that);
   },
   /*prevEvt*/
-  prevEvt (type) {
+  prevEvt(type) {
     let that = this;
     let date = that.getDate(that.data.tempDate);
     let year = date.year;
@@ -884,7 +943,7 @@ const _fn = {
     _fn.renderByView.call(that);
   },
   /*pickDate*/
-  pickDate (type, value, nextOrPrev) {
+  pickDate(type, value, nextOrPrev) {
     console.log('pick');
     console.log(value);
     this.isPick = true;
@@ -896,7 +955,13 @@ const _fn = {
     let day = date.day;
     let hour = date.hour;
     let minute = date.minute;
+    let second =  date.second;
     let needInitData = false;
+    let shouldFire = false;
+    //判断是否要自动关闭 options.minView =1 2 3 的时候 自动关闭
+    if (that.options.minView === that.currentView && that.options.minView !== 4) {
+      shouldFire = true;
+    }
     if (type === 'year') {
       year = value;
       if (nextOrPrev) {
@@ -943,21 +1008,26 @@ const _fn = {
     if (type === 'minute') {
       minute = value;
     }
-    that.data.tempDate = moment(that.data.tempDate, that.options.format).year(year).month(month).date(day).hour(hour).minute(minute);
+    if (type === 'second') {
+      second = value;
+    }
+    that.data.tempDate = moment(that.data.tempDate, that.options.format).year(year).month(month).date(day).hour(hour).minute(minute).second(second);
     if (needInitData) {
       that.data.dayList = _fn.getDayList.call(that, that.data.tempDate)
     }
-
-    if (type !== 'hour' && type !== 'minute') {
-      _fn.renderByView.call(that);
+    if (shouldFire) {
+      this.hide()
+    } else {
+      if (type !== 'hour' && type !== 'minute' && type !== 'second') {
+        _fn.renderByView.call(that);
+      }
     }
-
   },
   /*prefix*/
-  logger (msg) {
+  logger(msg) {
     return 'PdDatePicker: ' + msg
   },
-  renderByView () {
+  renderByView() {
     let that = this;
     _fn.renderYear.call(that);
     _fn.renderMonth.call(that);
@@ -979,27 +1049,52 @@ $.fn.PdDatePicker = function (option) {
 const OPTIONS = {
   startView: 3,
   maxView: 1,
-  minView: 5,
-  initDate: null,
-  startDate: '2016-11-12',
+  minView: 4,
+  initDate: moment(),
+  startDate: null,
   endDate: null,
   language: 'cn',
   format: 'YYYY-MM-DD',
   minuteRange: 1,
   containerId: null,
-  hourList: null
+  hourList: null,
+  autoClose: true
 };
 
 const Language = {
   cn: {
     week: {0: '日', 1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六'},
-    month: {0: '一月', 1: '二月', 2: '三月', 3: '四月', 4: '五月', 5: '六月', 6: '七月', 7: '八月', 8: '九月', 9: '十月', 10: '十一月', 11: '十二月'},
-    desc: {0: '年', 1: '月', 2: '日'}
+    month: {
+      0: '一月',
+      1: '二月',
+      2: '三月',
+      3: '四月',
+      4: '五月',
+      5: '六月',
+      6: '七月',
+      7: '八月',
+      8: '九月',
+      9: '十月',
+      10: '十一月',
+      11: '十二月'
+    }
   },
   en: {
     week: {0: 'Su', 1: 'Mo', 2: 'Tu', 3: 'We', 4: 'Th', 5: 'Fr', 6: 'Sa'},
-    month: {0: 'JAN', 1: 'FEB', 2: 'MAR', 3: 'APR', 4: 'MAY', 5: 'JUN', 6: 'JUL', 7: 'AUG', 8: 'SEP', 9: 'OCT', 10: 'NOV', 11: 'DEC'},
-    desc: {0: '', 1: '', 2: ''}
+    month: {
+      0: 'JAN',
+      1: 'FEB',
+      2: 'MAR',
+      3: 'APR',
+      4: 'MAY',
+      5: 'JUN',
+      6: 'JUL',
+      7: 'AUG',
+      8: 'SEP',
+      9: 'OCT',
+      10: 'NOV',
+      11: 'DEC'
+    }
   }
 };
 

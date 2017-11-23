@@ -21,7 +21,7 @@
     "rollup-plugin-uglify": "2.0.1"
   },
   "scripts": {
-    "compile":"rollup -c"
+    "compile": "rollup -c"
   },
   "repository": {
     "type": "git",

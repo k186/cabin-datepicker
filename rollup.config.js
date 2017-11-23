@@ -12,24 +12,24 @@ export default {
   entry: 'src/index.js',
   dest: 'dist/bundle.js',
   format: 'umd',
-  moduleName:'PdDatePicker',
-  globals:{
+  moduleName: 'PdDatePicker',
+  globals: {
     jquery: '$',
-    moment:'moment'
+    moment: 'moment'
   },
-  external:['jquery','moment'],//no package
+  external: ['jquery', 'moment'],//no package
   plugins: [
     json(),
     replace({
-      'process.env.NODE_ENV': JSON.stringify( 'production' )
+      'process.env.NODE_ENV': JSON.stringify('production')
     }),
     resolve({
       browser: true,
-      extensions: [ '.js', '.json']
+      extensions: ['.js', '.json']
     }), // tells Rollup how to find date-fns in node_modules
     commonjs(), // converts date-fns to ES modules
-    babel(),
-   production&&uglify()
+    babel()
+    //production&&uglify()
   ],
-  sourceMap: false
+  sourceMap: true
 }

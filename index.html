@@ -10,6 +10,10 @@
 </head>
 <body>
 
+<div suggester-item="Suggdaids"></div>
+
+
+
 <!--<div style="height: 1500px;width: 100%;position: absolute;padding: 60px">
     &lt;!&ndash;日期选择&ndash;&gt;
     <div class="pd-date-picker">
@@ -200,12 +204,22 @@
 <div style="padding: 150px">
     <input type="text" id="app">
 </div>
+<div style="padding: 150px">
+    <input type="text" id="app2">
+</div>
 <script>
     $('#app').PdDatePicker({
-      initDate:'2016-11-19 15:27',
-      format:'YYYY-MM-DD HH:mm:ss'
+      format:'YYYY-MM-DD HH:mm:ss',
+      maxView:1,
+      minView:3
     }).on('change',function (data) {
       console.log(data)
+    })
+    $('#app2').PdDatePicker({
+      initDate:'2016-10-09 15:27',
+      format:'YYYY-MM-DD HH:mm:ss',
+    }).on('change',function (data) {
+        console.log(data)
     })
 
 </script>
