@@ -28,8 +28,8 @@ export default {
       extensions: ['.js', '.json']
     }), // tells Rollup how to find date-fns in node_modules
     commonjs(), // converts date-fns to ES modules
-    babel()
-    //production&&uglify()
+    babel(),
+    production&&uglify()
   ],
   sourceMap: true
 }
