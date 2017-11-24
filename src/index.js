@@ -289,6 +289,7 @@ const _fn = {
     for (let i = 0; i < divs.length; i++) {
       max = Math.max(max, divs[i].style.zIndex || 0);
     }
+    max += 1;
     let isContainer = !!this.options.containerId;
     let dom = $('#' + this.id);
     let picker = $(`div[pd-item=pdDatePicker${this.id}]`);
@@ -317,9 +318,11 @@ const _fn = {
       if (symbo !== 'right') {
         picker.css('top', top + 'px');
         picker.css('left', left + 'px');
+        picker.css('zIndex', max);
       } else {
         picker.css('top', top + 'px');
         picker.css('right', right + 'px');
+        picker.css('zIndex', max);
       }
     }
 
