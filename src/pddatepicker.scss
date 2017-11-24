@@ -40,7 +40,7 @@ $title-front-color:#808080;
 
 .pd {
   &-date-picker {
-    &>*{
+    & *{
      @include borderBox();
       -webkit-user-select: none;
       -moz-user-select: none;
@@ -53,21 +53,21 @@ $title-front-color:#808080;
     box-shadow: $box-shadow;
     border-radius: $border-radius;
     position: absolute;
-    min-width: 180px;
+    width: 260px;
+    margin-bottom: 10px;
   }
   &-date-picker-box {
-    width: 180px;
-    padding: 10px;
+    padding-top: 10px;
+    width: 260px;
   }
   &-date-picker-bigbox {
+    padding-top: 10px;
     width: 260px;
-   /* height: 260px;*/
-    padding: 10px 25px;
   }
   &-date-picker{
     &-title-box{
       font-size: 13px;
-      padding: 5px 0;
+      padding: 5px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -93,6 +93,7 @@ $title-front-color:#808080;
     }
     &-date-box{
       font-size: 12px;
+      padding: 0 20px;
       ul{
         margin: 0;
         padding: 0;
@@ -131,7 +132,6 @@ $title-front-color:#808080;
         border-radius: $border-radius;
         display: flex;
         flex-wrap: nowrap;
-        width: 160px;
         height: 200px;
         position: relative;
         &>.item{
@@ -214,5 +214,20 @@ $title-front-color:#808080;
       }
 
     }
+  }
+  &-date-picker-today{
+    margin-top: 10px;
+    border-top: 1px solid $border-color;
+    text-align: right;
+    &-item{
+      height: 50px;
+      line-height: 50px;
+      padding: 0 20px;
+      color: $active-background-color;
+      display: inline-block;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
   }
 }

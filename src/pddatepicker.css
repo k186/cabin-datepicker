@@ -33,8 +33,9 @@
   box-shadow: 0 5px 30px 0 rgba(0, 0, 0, 0.05);
   border-radius: 4px;
   position: absolute;
-  min-width: 180px; }
-  .pd-date-picker > * {
+  width: 260px;
+  margin-bottom: 10px; }
+  .pd-date-picker * {
     -moz-box-sizing: border-box;
     /*Firefox3.5+*/
     -webkit-box-sizing: border-box;
@@ -49,15 +50,14 @@
     -ms-user-select: none;
     user-select: none; }
 .pd-date-picker-box {
-  width: 180px;
-  padding: 10px; }
+  padding-top: 10px;
+  width: 260px; }
 .pd-date-picker-bigbox {
-  width: 260px;
-  /* height: 260px;*/
-  padding: 10px 25px; }
+  padding-top: 10px;
+  width: 260px; }
 .pd-date-picker-title-box {
   font-size: 13px;
-  padding: 5px 0;
+  padding: 5px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -78,7 +78,8 @@
   .pd-date-picker-btn:hover {
     background: #F5F5F5; }
 .pd-date-picker-date-box {
-  font-size: 12px; }
+  font-size: 12px;
+  padding: 0 20px; }
   .pd-date-picker-date-box ul {
     margin: 0;
     padding: 0;
@@ -111,7 +112,6 @@
     border-radius: 4px;
     display: flex;
     flex-wrap: nowrap;
-    width: 160px;
     height: 200px;
     position: relative; }
     .pd-date-picker-date-box > .hourbox > .item {
@@ -173,5 +173,17 @@
       color: #E6E6E6; }
     .pd-date-picker-date-box > .hourbox > ul > .prev > div, .pd-date-picker-date-box > .daybox > ul > .prev > div, .pd-date-picker-date-box > .yearmonthbox > ul > .prev > div {
       color: #E6E6E6; }
+.pd-date-picker-today {
+  margin-top: 10px;
+  border-top: 1px solid #F5F5F5;
+  text-align: right; }
+  .pd-date-picker-today-item {
+    height: 50px;
+    line-height: 50px;
+    padding: 0 20px;
+    color: #6B6ED3;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 14px; }
 
 /*# sourceMappingURL=pddatepicker.css.map */

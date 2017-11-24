@@ -6639,13 +6639,12 @@ var PdDatePicker = function () {
     this.data = {};
     this.View = null;
     this.currentView = null;
-    this.isShow = false;
-    this.isPick = false;
+    this.shouldFire = false;
     _fn.initOptions.call(this, id, options);
     _fn.initData.call(this);
     _fn.initRenderData.call(this);
     _fn.renderDom.call(this);
-    _fn.isShow.call(this);
+    _fn.bindDocEvt.call(this);
   }
 
   createClass(PdDatePicker, [{
@@ -6672,22 +6671,24 @@ var PdDatePicker = function () {
     }
   }, {
     key: 'hide',
-    value: function hide() {
-      if (!this.isShow) return;
+    value: function hide(type) {
       $('div[pd-item=pdDatePicker' + this.id + ']').css('display', 'none');
       $('#' + this.options.containerId).css('position', '');
       var result = {};
-      if (this.isPick) {
+      if (this.shouldFire) {
         result = this.data.tempDate;
-        this.isPick = false;
+        $('#' + this.id).val(result.format(this.options.format));
+        this.shouldFire = false;
       } else {
         result = this.data.orDate;
       }
-      this.data.orDate = this.data.tempDate = result;
       this.currentView = this.options.startView;
+      if (!type) {
+        this.data.orDate = this.data.tempDate = result;
+        $('#' + this.id).val(result.format(this.options.format));
+      }
       _fn.initRenderData.call(this);
       _fn.renderByView.call(this);
-      $('#' + this.id).val(result.format(this.options.format));
       this.fire('change', result);
     }
   }, {
@@ -6952,8 +6953,8 @@ var _fn = {
     }
   },
 
-  /*isShow*/
-  isShow: function isShow() {
+  /*bindDocEvt*/
+  bindDocEvt: function bindDocEvt() {
     var _this = this;
 
     var input = $('#' + this.id);
@@ -6962,21 +6963,22 @@ var _fn = {
       e.stopPropagation();
     });
     $(document.body).bind('click', function (e) {
+      if (_this.View.css('display') === 'none') {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
-      _this.hide();
-      _this.isShow = false;
+      _this.hide('only');
     });
     input.on('click', function (e) {
       e.stopPropagation();
       _this.show();
-      _this.isShow = true;
     });
-    //this.hide();
   },
 
   /*init*/
   initOptions: function initOptions(id, options) {
+    var shouldShowDefault = false;
     if (!id) {
       console.warn(_fn.logger('need a unique dom id'));
       return false;
@@ -6992,8 +6994,11 @@ var _fn = {
     if (options.minView < 1 || options.minView > 4) {
       options.minView = 4;
     }
-    if (!moment(options.initDate).isValid()) {
+    if (!options.initDate || !moment(options.initDate).isValid()) {
       options.initDate = moment();
+    } else {
+      options.initDate = moment(options.initDate);
+      shouldShowDefault = true;
     }
     if (!moment(options.startDate).isValid()) {
       options.startDate = null;
@@ -7015,6 +7020,9 @@ var _fn = {
     }
     for (var key in OPTIONS) {
       this.options[key] = options[key] ? options[key] : OPTIONS[key];
+    }
+    if (shouldShowDefault) {
+      $('#' + this.id).val(options.initDate.format(options.format));
     }
     this.currentView = this.options.startView;
   },
@@ -7364,6 +7372,15 @@ var _fn = {
         _fn.changeView.call(that);
       });
     }
+    /*  */
+    that.View.find('.E_today').on('click', function () {
+      that.data.tempDate = that.data.orDate = moment();
+      that.hide();
+    });
+    that.View.find('.E_ok').on('click', function () {
+      that.data.orDate = that.data.tempDate;
+      that.hide();
+    });
   },
 
   /*regDate*/
@@ -7607,9 +7624,6 @@ var _fn = {
 
   /*pickDate*/
   pickDate: function pickDate(type, value, nextOrPrev) {
-    console.log('pick');
-    console.log(value);
-    this.isPick = true;
     value = Number(value);
     var that = this;
     var date = that.getDate(that.data.tempDate);
@@ -7620,10 +7634,11 @@ var _fn = {
     var minute = date.minute;
     var second = date.second;
     var needInitData = false;
-    var shouldFire = false;
     //判断是否要自动关闭 options.minView =1 2 3 的时候 自动关闭
     if (that.options.minView === that.currentView && that.options.minView !== 4) {
-      shouldFire = true;
+      this.shouldFire = true;
+    } else {
+      this.shouldFire = false;
     }
     if (type === 'year') {
       year = value;
@@ -7680,7 +7695,7 @@ var _fn = {
     if (needInitData) {
       that.data.dayList = _fn.getDayList.call(that, that.data.tempDate);
     }
-    if (shouldFire) {
+    if (this.shouldFire) {
       this.hide();
     } else {
       if (type !== 'hour' && type !== 'minute' && type !== 'second') {
@@ -7761,11 +7776,11 @@ var Language = {
 };
 
 var TEMPLATE_BOX = ['<div class="pd-date-picker"></div>'].join("");
-var TEMPLATE_YEAR_MONTH = ['<div class="pd-date-picker-bigbox">', '        <div class="pd-date-picker-title-box">', '            <div class="pd-date-picker-btn pd-iconfont E_left icon-arrow-left"></div>', '            <div class="pd-date-picker-title E_view"></div>', '            <div class="pd-date-picker-btn pd-iconfont E_right icon-arrow-right"></div>', '        </div>', '        <div class="pd-date-picker-date-box">', '            <div class="yearmonthbox">', '                <ul class="E_pick">', '                </ul>', '            </div>', '        </div>', '    </div>'].join("");
+var TEMPLATE_YEAR_MONTH = ['<div class="pd-date-picker-bigbox">', '        <div class="pd-date-picker-title-box">', '            <div class="pd-date-picker-btn pd-iconfont E_left icon-arrow-left"></div>', '            <div class="pd-date-picker-title E_view"></div>', '            <div class="pd-date-picker-btn pd-iconfont E_right icon-arrow-right"></div>', '        </div>', '        <div class="pd-date-picker-date-box">', '            <div class="yearmonthbox">', '                <ul class="E_pick">', '                </ul>', '            </div>', '        </div>', '        <div class="pd-date-picker-today">', '            <div class="pd-date-picker-today-item E_today">今天</div>', '        </div>', '    </div>'].join("");
 
-var TEMPLATE_DAY = ['<div class="pd-date-picker-bigbox">', '        <div class="pd-date-picker-title-box">', '            <div class="pd-date-picker-btn pd-iconfont E_left icon-arrow-left"></div>', '            <div class="pd-date-picker-title E_view"></div>', '            <div class="pd-date-picker-btn pd-iconfont E_right icon-arrow-right"></div>', '        </div>', '        <div class="pd-date-picker-date-box">', '            <ul class="title">', '            </ul>', '            <div class="daybox">', '                <ul class="E_pick">', '                </ul>', '            </div>', '        </div>', '    </div>'].join("");
+var TEMPLATE_DAY = ['<div class="pd-date-picker-bigbox">', '        <div class="pd-date-picker-title-box">', '            <div class="pd-date-picker-btn pd-iconfont E_left icon-arrow-left"></div>', '            <div class="pd-date-picker-title E_view"></div>', '            <div class="pd-date-picker-btn pd-iconfont E_right icon-arrow-right"></div>', '        </div>', '        <div class="pd-date-picker-date-box">', '            <ul class="title">', '            </ul>', '            <div class="daybox">', '                <ul class="E_pick">', '                </ul>', '            </div>', '        </div>', '        <div class="pd-date-picker-today">', '            <div class="pd-date-picker-today-item E_today">今天</div>', '        </div>', '    </div>'].join("");
 
-var TEMPLATE_WHEEL = ['<div class="pd-date-picker-box">', '            <div class="pd-date-picker-title-box">', '                <div class="pd-date-picker-title E_view"></div>', '            </div>', '            <div class="pd-date-picker-date-box">', '                <div class="hourbox">', '                </div>', '            </div>', '        </div>'].join("");
+var TEMPLATE_WHEEL = ['<div class="pd-date-picker-box">', '            <div class="pd-date-picker-title-box">', '                <div class="pd-date-picker-title E_view"></div>', '            </div>', '            <div class="pd-date-picker-date-box">', '                <div class="hourbox">', '                </div>', '            </div>', '        <div class="pd-date-picker-today">', '            <div class="pd-date-picker-today-item E_ok">确认</div>', '        </div>', '        </div>'].join("");
 
 var TEMPLATE_ITEM = ['<div class="item">', '                        <div class="check-line"></div>', '                        <div class="check">', '                            <div class="check-list">', '                            </div>', '                        </div>', '                        <div class="wheel">', '                        </div>', '                    </div>'].join("");
 
