@@ -19,7 +19,7 @@
  * container
  * minuteRange
  * hourList
- * id
+ * dom
  * */
 
 import moment from 'moment'
@@ -28,71 +28,63 @@ import "babel-polyfill";
 
 
 class PdDatePicker {
-  constructor(id, options) {
-    this.id = null;
+  constructor(dom, options) {
+    this.dom = null;
     this.options = {};
     this.data = {};
     this.View = null;
     this.currentView = null;
     this.shouldFire = false;
-    _fn.initOptions.call(this, id, options);
+    _fn.initOptions.call(this, dom, options);
     _fn.initData.call(this);
     _fn.initRenderData.call(this);
     _fn.renderDom.call(this);
     _fn.bindDocEvt.call(this);
-
-  }
-
-  on(event, callback) {
-    if (EVENTS_TYPE.indexOf(event) < 0) {
-      return;
-    }
-    if (event == 'change' && events[event]) {
-      callback();
-      return;
-    }
-    events[event] = events[event] || $.Callbacks();
-    events[event].add(callback);
-  }
-
-  fire(event, param) {
-    if (EVENTS_TYPE.indexOf(event) < 0) {
-      return;
-    }
-    events[event] = events[event] || $.Callbacks();
-    events[event].fire(param);
   }
 
   hide(type) {
-    $(`div[pd-item=pdDatePicker${this.id}]`).css('display', 'none');
-    $('#' + this.options.containerId).css('position', '');
+    let that = this;
+    if (that.View && that.View.css('display') === 'none') {
+      return
+    }
+    that.View.css('display', 'none');
+    that.View.css('zIndex', 0);
     let result = {};
-    if (this.shouldFire) {
-      result = this.data.tempDate;
-      $('#' + this.id).val(result.format(this.options.format));
+    if (that.shouldFire) {
+      result = that.data.tempDate;
+      this.dom.val(result.format(that.options.format));
       this.shouldFire = false;
     } else {
       result = this.data.orDate;
     }
-    this.currentView = this.options.startView;
+    that.currentView = that.options.startView;
     if (!type) {
-      this.data.orDate = this.data.tempDate = result;
-      $('#' + this.id).val(result.format(this.options.format));
+      that.data.orDate = that.data.tempDate = result;
+      that.dom.val(result.format(that.options.format));
     }
-    _fn.initRenderData.call(this);
-    _fn.renderByView.call(this);
-    this.fire('change', result);
+    _fn.initRenderData.call(that);
+    _fn.renderByView.call(that);
+    that.dom.trigger('change', that.data.orDate)
   }
 
   show() {
-    $(`div[pd-item^=pdDatePicker]`).css('display', 'none');
-    $(`div[pd-item=pdDatePicker${this.id}]`).css('display', 'block');
-    $('#' + this.options.containerId).css('position', 'relative');
-    _fn.getPosition.call(this);
+    let that = this;
+    if (!that.View) {
+      return
+    }
+    _fn.getPosition.call(that);
+    that.View.css('display', '')
   }
 
   destroy() {
     this.View.remove();
+
+    delete this.dom;
+    delete this.options;
+    delete this.data;
+    delete this.View;
+    delete this.currentView;
+    delete this.shouldFire;
   }
 
   /* getDateValue */
@@ -126,7 +118,7 @@ class pdWheelItem {
     this.dataList = null;
     this.value = null;
     this.init(options);
-    $(document.body).bind('click', _fn.output)
+    $(document).bind('click', _fn.output)
   }
 
   init(options) {
@@ -166,13 +158,13 @@ class pdWheelItem {
       that.startY = e.clientY;
       that.startTime = new Date().getTime();
       //movemove事件必须绑定到$(document)上，鼠标移动是在整个屏幕上的
-      $(document.body).bind("mousemove", (e) => {
+      $(document).on("mousemove", (e) => {
         e.stopPropagation();
         e.preventDefault();
         that.move(e);
       });
       //此处的$(document)可以改为obj
-      $(document.body).bind("mouseup", (e) => {
+      $(document).on("mouseup", (e) => {
         e.stopPropagation();
         e.preventDefault();
         that.stop(e);
@@ -203,8 +195,8 @@ class pdWheelItem {
     }
     that.setCss('stop', distance, time);
     //解绑定，这一步很必要，前面有解释
-    $(document.body).unbind("mousemove");
-    $(document.body).unbind("mouseup");
+    $(document).off("mousemove");
+    $(document).off("mouseup");
   }
 
   render() {
@@ -289,15 +281,16 @@ const _fn = {
     for (let i = 0; i < divs.length; i++) {
       max = Math.max(max, divs[i].style.zIndex || 0);
     }
+    max += 1;
     let isContainer = !!this.options.containerId;
-    let dom = $('#' + this.id);
-    let picker = $(`div[pd-item=pdDatePicker${this.id}]`);
+    let dom = this.dom;
+    let picker = this.View;
     let domOffset = dom.offset();
     let domHeight = dom.outerHeight();
     let domWidth = dom.outerWidth();
     let pickerWidth = picker.outerWidth();
     let pickerHeight = picker.outerHeight();
-    let windowWidth = $(document.body).width();
+    let windowWidth = $(document).width();
     let right = 0;
     let top = 0;
     let left = 0;
@@ -317,27 +310,28 @@ const _fn = {
       if (symbo !== 'right') {
         picker.css('top', top + 'px');
         picker.css('left', left + 'px');
+        picker.css('zIndex', max);
       } else {
         picker.css('top', top + 'px');
         picker.css('right', right + 'px');
+        picker.css('zIndex', max);
       }
     }
 
   },
   /*bindDocEvt*/
   bindDocEvt() {
-    let input = $('#' + this.id);
+    let input = this.dom;
+    let that = this;
     this.View.on('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
     });
-    $(document.body).bind('click', (e) => {
-      if (this.View.css('display') === 'none') {
-        return
+    $(document).on('mousedown touchend', (e) => {
+      let view = that.View;
+      if (view && !view.is(e.target) && view.has(event.target).length === 0) {
+        this.hide('only');
       }
-      e.preventDefault();
-      e.stopPropagation();
-      this.hide('only');
     });
     input.on('click', (e) => {
       e.stopPropagation();
@@ -345,52 +339,57 @@ const _fn = {
     });
   },
   /*init*/
-  initOptions(id, options) {
+  initOptions(dom, options) {
     let shouldShowDefault = false
-    if (!id) {
-      console.warn(_fn.logger('need a unique dom id'));
+    if (!dom) {
+      console.warn(_fn.logger('need a unique input tag'));
       return false
     }
-    this.id = id;
+    this.dom = $(dom);
     //reg options
-    if (!(options.startView >= OPTIONS.maxView && options.startView <= OPTIONS.minView)) {
-      options.startView = 3
-    }
-    if (options.maxView < 1 || options.maxView > 4) {
-      options.maxView = 1
-    }
-    if (options.minView < 1 || options.minView > 4) {
-      options.minView = 4
-    }
-    if (!options.initDate || !moment(options.initDate).isValid()) {
-      options.initDate = moment()
+    if (options) {
+      if (!(options.startView >= OPTIONS.maxView && options.startView <= OPTIONS.minView)) {
+        options.startView = 3
+      }
+      if (options.maxView < 1 || options.maxView > 4) {
+        options.maxView = 1
+      }
+      if (options.minView < 1 || options.minView > 4) {
+        options.minView = 4
+      }
+      if (!options.initDate || !moment(options.initDate).isValid()) {
+        options.initDate = moment()
+      } else {
+        options.initDate = moment(options.initDate);
+        shouldShowDefault = true;
+      }
+      if (!moment(options.startDate).isValid()) {
+        options.startDate = null;
+      }
+      if (!moment(options.endDate).isValid()) {
+        options.endDate = null;
+      }
+      if (options.language !== 'cn' || options.language !== 'en') {
+        options.language = 'cn'
+      }
+      if (options.minuteRange >= 60) {
+        options.minuteRange = 1
+      }
+      if ($('#' + options.containerId).length == 0) {
+        options.containerId = null
+      }
+      if (typeof options.hourList !== Array) {
+        options.hourList = null
+      }
     } else {
-      options.initDate = moment(options.initDate);
-      shouldShowDefault = true;
+      options = {}
     }
-    if (!moment(options.startDate).isValid()) {
-      options.startDate = null;
-    }
-    if (!moment(options.endDate).isValid()) {
-      options.endDate = null;
-    }
-    if (options.language !== 'cn' || options.language !== 'en') {
-      options.language = 'cn'
-    }
-    if (options.minuteRange >= 60) {
-      options.minuteRange = 1
-    }
-    if ($('#' + options.containerId).length == 0) {
-      options.containerId = null
-    }
-    if (typeof options.hourList !== Array) {
-      options.hourList = null
-    }
+
     for (let key in OPTIONS) {
       this.options[key] = options[key] ? options[key] : OPTIONS[key];
     }
     if (shouldShowDefault) {
-      $('#' + this.id).val(options.initDate.format(options.format));
+      this.dom.val(options.initDate.format(options.format));
     }
     this.currentView = this.options.startView;
   },
@@ -399,7 +398,7 @@ const _fn = {
     let that = this;
     let date = '';
     if (that.options.forceFormat) {
-      date = $('#' + that.id).val();
+      date = that.dom.val();
     } else {
       date = that.options.initDate;
     }
@@ -423,20 +422,19 @@ const _fn = {
   /*renderDom*/
   renderDom() {
     let that = this;
-    $(document.body).find(`div[pd-itme=pdDatePicker${that.id}]`).remove();
-    let box = $(TEMPLATE_BOX).clone().attr('pd-item', 'pdDatePicker' + that.id);
+    let box = $(TEMPLATE_BOX).clone().attr('pd-item', 'pdDatePicker');
     that.View && that.View.remove();
     that.View = box;
     that.View.css('display', 'none');
-    //todo
+    //that.View.css('display', 'none');
     _fn.renderByView.call(that);
-    if (this.options.containerId) {
-      $('#' + this.options.containerId).append(that.View);
+    if (that.options.containerId) {
+      let container = $('#' + that.options.containerId);
+      container.append(that.View);
+      container.css('position', 'relative');
     } else {
       $('body').append(that.View);
     }
-
-    console.log(that)
   },
   renderYear() {
     let that = this;
@@ -584,12 +582,11 @@ const _fn = {
   },
   /*set HourTitle*/
   setHourTitle() {
-    let that = this;
-    let title = that.View.find('div[pd-item=hour]').find('.pd-date-picker-title');
-    if (that.options.minView === that.options.maxView === 4) {
-      title.html(that.data.tempDate.format('HH:mm:ss'))
+    let title = this.View.find('div[pd-item=hour]').find('.pd-date-picker-title');
+    if (this.options.minView === this.options.maxView && this.options.maxView === 4) {
+      title.html(this.data.tempDate.format('HH:mm:ss'))
     } else {
-      title.html(that.data.tempDate.format('YYYY-MM-DD HH:mm:ss'))
+      title.html(this.data.tempDate.format('YYYY-MM-DD HH:mm:ss'))
     }
   },
   /*changeView*/
@@ -727,7 +724,7 @@ const _fn = {
         _fn.changeView.call(that)
       });
     }
-    /*  */
+    /* btn */
     that.View.find('.E_today').on('click', () => {
       that.data.tempDate = that.data.orDate = moment();
       that.hide();
@@ -1054,11 +1051,33 @@ const _fn = {
 
 
 };
-export default PdDatePicker;
+
 /*支持jQ链式调用*/
 $.fn.PdDatePicker = function (option) {
-  let id = this.prop('id');
-  return new PdDatePicker(id, option);
+  let args = Array.apply(null, arguments);
+  args.shift();
+  let internal_return;
+  this.each(function () {
+    let $this = $(this),
+      data = $this.data('pddatepicker'),
+      options = typeof option === 'object' && option;
+    if (!data) {
+      $this.data('pddatepicker', (data = new PdDatePicker(this, options)));
+    }
+    if (option === 'destory') {
+      $this.data('pddatepicker').destroy()
+    }
+    if (typeof option === 'string' && typeof data[option] === 'function') {
+      internal_return = data[option].apply(data, args);
+      if (internal_return !== undefined) {
+        return false;
+      }
+    }
+  });
+  if (internal_return !== undefined)
+    return internal_return;
+  else
+    return this;
 };
 
 
@@ -1115,6 +1134,7 @@ const Language = {
 };
 
 const TEMPLATE_BOX = ['<div class="pd-date-picker"></div>'].join("");
+
 const TEMPLATE_YEAR_MONTH = ['<div class="pd-date-picker-bigbox">',
   '        <div class="pd-date-picker-title-box">',
   '            <div class="pd-date-picker-btn pd-iconfont E_left icon-arrow-left"></div>',
@@ -1173,6 +1193,3 @@ const TEMPLATE_ITEM = ['<div class="item">',
   '                        <div class="wheel">',
   '                        </div>',
   '                    </div>'].join("");
-
-const EVENTS_TYPE = ['change'];
-let events = {};
