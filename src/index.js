@@ -54,6 +54,7 @@ class PdDatePicker {
       result = that.data.tempDate;
       this.dom.val(result.format(that.options.format));
       this.shouldFire = false;
+      that.dom.trigger('change', result)
     } else {
       result = this.data.orDate;
     }
@@ -64,7 +65,6 @@ class PdDatePicker {
     }
     _fn.initRenderData.call(that);
     _fn.renderByView.call(that);
-    that.dom.trigger('change', that.data.orDate)
   }
 
   show() {
