@@ -59,8 +59,8 @@ class PdDatePicker {
       result = this.data.orDate;
     }
     that.currentView = that.options.startView;
+    that.data.orDate = that.data.tempDate = result;
     if (!type) {
-      that.data.orDate = that.data.tempDate = result;
       that.dom.val(result.format(that.options.format));
     }
     _fn.initRenderData.call(that);
@@ -727,10 +727,12 @@ const _fn = {
     /* btn */
     that.View.find('.E_today').on('click', () => {
       that.data.tempDate = that.data.orDate = moment();
+      that.shouldFire = true;
       that.hide();
     });
     that.View.find('.E_ok').on('click', () => {
       that.data.orDate = that.data.tempDate;
+      that.shouldFire = true;
       that.hide();
     })
   },
