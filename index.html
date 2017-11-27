@@ -334,7 +334,7 @@
     initDate: '2016-11-19 15:27',
     format: 'HH:mm',
     containerId: 'abc'
-  }).on('change', function (data) {
+  }).on('change', function (evt,data) {
     console.log(data)
   });
   $('#time2').PdDatePicker({
@@ -374,7 +374,7 @@
   }).on('change', function (data) {
     console.log(data)
   });
-  $('#time6').PdDatePicker({
+  $('.time6').PdDatePicker({
     startView: 3,
     initDate: '2016-11-19 15:27',
     format: 'MM-DD HH:mm',
