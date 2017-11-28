@@ -334,7 +334,7 @@ const _fn = {
     });
     $(document).on('mousedown touchend', (e) => {
       let view = that.View;
-      if (view && !view.is(e.target) && view.has(event.target).length === 0) {
+      if (view && !view.is(e.target) && view.has(e.target).length === 0) {
         this.hide('only');
       }
     });
