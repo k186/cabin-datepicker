@@ -52,9 +52,14 @@ class PdDatePicker {
     let result = {};
     if (that.shouldFire) {
       result = that.data.tempDate;
-      this.dom.val(result.format(that.options.format));
       this.shouldFire = false;
-      that.dom.trigger('change', result)
+      if(type==='reset'){
+        that.dom.val('');
+        that.dom.trigger('change', '')
+      }else {
+        this.dom.val(result.format(that.options.format));
+        that.dom.trigger('change', result)
+      }
     } else {
       result = this.data.orDate;
     }
@@ -730,6 +735,11 @@ const _fn = {
       that.shouldFire = true;
       that.hide();
     });
+    that.View.find('.E_reset').on('click', () => {
+      that.data.tempDate = that.data.orDate = moment();
+      that.shouldFire = true;
+      that.hide('reset');
+    });
     that.View.find('.E_ok').on('click', () => {
       that.data.orDate = that.data.tempDate;
       that.shouldFire = true;
@@ -1150,6 +1160,7 @@ const TEMPLATE_YEAR_MONTH = ['<div class="pd-date-picker-bigbox">',
   '            </div>',
   '        </div>',
   '        <div class="pd-date-picker-today">',
+  '            <div class="pd-date-picker-today-item outline E_reset">重置</div>',
   '            <div class="pd-date-picker-today-item E_today">今天</div>',
   '        </div>',
   '    </div>'].join("");
@@ -1169,6 +1180,7 @@ const TEMPLATE_DAY = ['<div class="pd-date-picker-bigbox">',
   '            </div>',
   '        </div>',
   '        <div class="pd-date-picker-today">',
+  '            <div class="pd-date-picker-today-item outline E_reset">重置</div>',
   '            <div class="pd-date-picker-today-item E_today">今天</div>',
   '        </div>',
   '    </div>'].join("");
@@ -1182,6 +1194,7 @@ const TEMPLATE_WHEEL = ['<div class="pd-date-picker-box">',
   '                </div>',
   '            </div>',
   '        <div class="pd-date-picker-today">',
+  '            <div class="pd-date-picker-today-item outline E_reset">重置</div>',
   '            <div class="pd-date-picker-today-item E_ok">确认</div>',
   '        </div>',
   '        </div>'].join("");
