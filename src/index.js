@@ -311,6 +311,7 @@ const _fn = {
       top = domHeight + 10;
       picker.css('top', top + 'px');
       picker.css('left', 0 + 'px');
+      picker.css('zIndex', max);
     } else {
       if (symbo !== 'right') {
         picker.css('top', top + 'px');

@@ -1,6 +1,6 @@
 {
   "name": "pd-datepicker-pc",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "date picker",
   "main": "dist/bundle.js",
   "dependencies": {
