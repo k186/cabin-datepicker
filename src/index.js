@@ -53,10 +53,10 @@ class PdDatePicker {
     if (that.shouldFire) {
       result = that.data.tempDate;
       this.shouldFire = false;
-      if(type==='reset'){
+      if (type === 'reset') {
         that.dom.val('');
         that.dom.trigger('change', '')
-      }else {
+      } else {
         this.dom.val(result.format(that.options.format));
         that.dom.trigger('change', result)
       }
@@ -143,9 +143,33 @@ class pdWheelItem {
   }
 
   bindEvt() {
-    let that = this
+    let that = this;
     that.View.bind('mousedown', (e) => {
+      console.log(that.View.find('.check-div').eq(0).data())
       that.start(e);
+    });
+    that.bindClickEvt();
+  }
+
+  bindClickEvt(){
+    var that=this
+    that.View.attr('isbind',1);
+    that.View.find('.check-div').bind('click', (e) => {
+      console.log('click')
+      e.preventDefault();
+      e.stopPropagation();
+      if(!$(e.target).hasClass('check-div')){
+        return
+      }
+      //拿上次的距离
+      let lastMove = Number(that.View.attr('lastMove'));
+      //本次的距离
+      let thisMove = $(e.target).attr('data-index') * 40;
+
+      let distance =  -(thisMove + lastMove);
+      debugger
+      this.setCss('stop', distance, 1000);
+      debugger
     })
   }
 
@@ -163,11 +187,11 @@ class pdWheelItem {
       that.startY = e.clientY;
       that.startTime = new Date().getTime();
       //movemove事件必须绑定到$(document)上，鼠标移动是在整个屏幕上的
-      $(document).on("mousemove", (e) => {
+      /*$(document).on("mousemove", (e) => {
         e.stopPropagation();
         e.preventDefault();
         that.move(e);
-      });
+      });*/
       //此处的$(document)可以改为obj
       $(document).on("mouseup", (e) => {
         e.stopPropagation();
@@ -210,8 +234,8 @@ class pdWheelItem {
     let checkList = '';
     let wheelList = '';
     for (let i = 0; i < that.dataList.length; i++) {
-      checkList += `<div class="check-div">${that.dataList[i]}</div>`
-      wheelList += `<div class="wheel-div">${that.dataList[i]}</div>`
+      checkList += `<div class="check-div" data-index="${i}">${that.dataList[i]}</div>`
+      wheelList += `<div class="wheel-div" data-index="${i}">${that.dataList[i]}</div>`
     }
     item.find('.check-list').html(checkList);
     item.find('.wheel').html(checkList);
