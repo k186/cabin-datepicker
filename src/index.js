@@ -307,8 +307,11 @@ const _fn = {
   getPosition() {
     let divs = document.getElementsByTagName("div");
     let max = 0;
-    for (let i = 0; i < divs.length; i++) {
-      max = Math.max(max, divs[i].style.zIndex || 0);
+    for (var i = 0; i < divs.length; i++) {
+      var index = $(divs[i]).css('zIndex');
+      if (!isNaN(index)) {
+        max += Number(index)
+      }
     }
     max += 1;
     let isContainer = !!this.options.containerId;
