@@ -151,14 +151,14 @@ class pdWheelItem {
     that.bindClickEvt();
   }
 
-  bindClickEvt(){
-    var that=this
-    that.View.attr('isbind',1);
+  bindClickEvt() {
+    var that = this
+    that.View.attr('isbind', 1);
     that.View.find('.check-div').bind('click', (e) => {
       console.log('click')
       e.preventDefault();
       e.stopPropagation();
-      if(!$(e.target).hasClass('check-div')){
+      if (!$(e.target).hasClass('check-div')) {
         return
       }
       //拿上次的距离
@@ -166,7 +166,7 @@ class pdWheelItem {
       //本次的距离
       let thisMove = $(e.target).attr('data-index') * 40;
 
-      let distance =  -(thisMove + lastMove);
+      let distance = -(thisMove + lastMove);
       debugger
       this.setCss('stop', distance, 1000);
       debugger
@@ -390,17 +390,17 @@ const _fn = {
       if (options.minView < 1 || options.minView > 4) {
         options.minView = 4
       }
-      if (!options.initDate || !moment(options.initDate).isValid()) {
-        options.initDate = moment()
-      } else {
-        options.initDate = moment(options.initDate);
-        shouldShowDefault = true;
-      }
       if (!moment(options.startDate).isValid()) {
         options.startDate = null;
       }
       if (!moment(options.endDate).isValid()) {
         options.endDate = null;
+      }
+      if (!options.initDate || !moment(options.initDate).isValid()) {
+        options.initDate = moment()
+      } else {
+        options.initDate = moment(options.initDate);
+        shouldShowDefault = true;
       }
       if (options.language !== 'cn' || options.language !== 'en') {
         options.language = 'cn'
@@ -758,10 +758,28 @@ const _fn = {
       });
     }
     /* btn */
-    that.View.find('.E_today').on('click', () => {
+    that.View.find('.E_today').on('click', (evt) => {
+      var current = moment();
+      var flag = false;
+      if (that.options.startDate) {
+        if (moment().isBefore(moment(that.options.startDate))) {
+          flag = true
+        }
+      }
+      if (that.options.endDate) {
+        if (moment().isAfter(moment(that.options.endDate))) {
+          flag = true;
+        }
+      }
+
       that.data.tempDate = that.data.orDate = moment();
       that.shouldFire = true;
-      that.hide();
+      if (flag) {
+        that.hide('reset');
+      } else {
+        that.hide();
+      }
+      evt.stopPropagation();
     });
     that.View.find('.E_reset').on('click', () => {
       that.data.tempDate = that.data.orDate = moment();

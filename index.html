@@ -328,11 +328,11 @@
 </div>
 <script>
   $('#time1').PdDatePicker({
-    startView: 4,
-    maxView:4,
-    minView:4,
-    initDate: '2016-11-19 15:27',
-    format: 'HH:mm',
+    startView: 3,
+    minView: 3,
+    initDate: '',
+    startDate:moment().add(3, 'day'),
+    format: 'YYYYMMDD',
     containerId: 'abc'
   }).on('change', function (evt,data) {
     console.log(data)
