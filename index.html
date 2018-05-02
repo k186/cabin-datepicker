@@ -319,67 +319,21 @@
   </div>
 </div>-->
 <div>
-  <input type="text" id="time1"/>
-  <input type="text" id="time2"/>
-  <input type="text" id="time3"/>
-  <input type="text" id="time4"/>
-  <input type="text" id="time5"/>
-  <input type="text" id="time6"/>
+  <input type="text" class="abc"/>
+  <input type="text" class="abc"/>
+  <input type="text" class="abc"/>
+  <input type="text" class="abc"/>
+  <input type="text" class="abc"/>
+  <input type="text" class="abc"/>
 </div>
 <script>
-  $('#time1').PdDatePicker({
-    startView: 3,
-    minView: 3,
-    initDate: '',
-    startDate:moment().add(3, 'day'),
-    format: 'YYYYMMDD',
-    containerId: 'abc'
-  }).on('change', function (evt,data) {
-    console.log(data)
-  });
-  $('#time2').PdDatePicker({
-    startView: 3,
-    initDate: '2016-11-19 15:27',
-    format: 'YYYY-MM-DD HH:mm',
-    //containerId: 'abc'
-  }).on('change', function (data) {
-    console.log(data)
-  });
-  $('#time3').PdDatePicker({
-    startView: 3,
-    maxView: 1,
-    minView: 4,
-    initDate: '2016-11-19 15:27',
-    startDate: '2016-11-10',
-    format: 'YYYY-MM HH:mm',
-    //containerId: 'abc'
-  }).on('change', function (data) {
-    console.log(data)
-  });
-  $('#time4').PdDatePicker({
-    startView: 2,
-    initDate: '2016-11-19 15:27',
-    startDate: '2016-11-10',
-    endDate: '2017-11-10',
-    format: 'YYYY-MM-DD',
-    //containerId: 'abc'
-  }).on('change', function (data) {
-    console.log(data)
-  });
-  $('#time5').PdDatePicker({
+  $('.abc').PdDatePicker({
     startView: 4,
-    initDate: '2016-11-19 15:27',
-    format: 'YYYY HH:mm',
-    //containerId: 'abc'
-  }).on('change', function (data) {
-    console.log(data)
-  });
-  $('.time6').PdDatePicker({
-    startView: 3,
-    initDate: '2016-11-19 15:27',
-    format: 'MM-DD HH:mm',
-    //containerId: 'abc'
-  }).on('change', function (data) {
+    maxView:4,
+    minView:4,
+    initDate: '',
+    format: 'HH:mm',
+  }).on('change', function (evt,data) {
     console.log(data)
   });
 

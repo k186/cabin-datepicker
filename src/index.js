@@ -167,9 +167,7 @@ class pdWheelItem {
       let thisMove = $(e.target).attr('data-index') * 40;
 
       let distance = -(thisMove + lastMove);
-      debugger
       this.setCss('stop', distance, 1000);
-      debugger
     })
   }
 
@@ -373,7 +371,8 @@ const _fn = {
   },
   /*init*/
   initOptions(dom, options) {
-    let shouldShowDefault = false
+    let shouldShowDefault = false;
+    options = $.extend(true, {}, options);
     if (!dom) {
       console.warn(_fn.logger('need a unique input tag'));
       return false
@@ -878,7 +877,7 @@ const _fn = {
     if (type === 'day') {
       let temp2 = '';
       if (nextOrPrev === 'prev') {
-        temp2 = year + '-' + (month < 10 ? '0' + month : month ) + '-' + (dateStr < 10 ? '0' + dateStr : dateStr);
+        temp2 = year + '-' + (month < 10 ? '0' + month : month) + '-' + (dateStr < 10 ? '0' + dateStr : dateStr);
       }
       if (nextOrPrev === 'next') {
         temp2 = year + '-' + (month + 2 < 10 ? '0' + (month + 2) : month + 2) + '-' + (dateStr < 10 ? '0' + dateStr : dateStr);
@@ -1121,9 +1120,6 @@ $.fn.PdDatePicker = function (option) {
       options = typeof option === 'object' && option;
     if (!data) {
       $this.data('pddatepicker', (data = new PdDatePicker(this, options)));
-    }
-    if (option === 'destory') {
-      $this.data('pddatepicker').destroy()
     }
     if (typeof option === 'string' && typeof data[option] === 'function') {
       internal_return = data[option].apply(data, args);

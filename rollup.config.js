@@ -31,5 +31,5 @@ export default {
     babel(),
     production&&uglify()
   ],
-  sourceMap: false
+  sourceMap: true
 }
