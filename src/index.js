@@ -83,7 +83,7 @@ class PdDatePicker {
 
   destroy() {
     this.View.remove();
-
+    this.dom.data('pddatepicker',null);
     delete this.dom;
     delete this.options;
     delete this.data;
@@ -1081,15 +1081,20 @@ const _fn = {
     if (type === 'second') {
       second = value;
     }
+    console.log('time', year + '-' + month + '-' + day)
     that.data.tempDate = moment(that.data.tempDate, that.options.format).year(year).month(month).date(day).hour(hour).minute(minute).second(second);
     if (needInitData) {
       that.data.dayList = _fn.getDayList.call(that, that.data.tempDate)
     }
     if (this.shouldFire) {
+      that.data.dayList = _fn.getDayList.call(that, that.data.tempDate)
       this.hide()
     } else {
       if (type !== 'hour' && type !== 'minute' && type !== 'second') {
-        _fn.renderByView.call(that);
+        that.data.dayList = _fn.getDayList.call(that, that.data.tempDate)
+        setTimeout(function () {
+          _fn.renderByView.call(that);
+        }, 50)
       }
     }
   },
